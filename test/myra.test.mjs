@@ -117,6 +117,19 @@ test('API imports, discovers, confirms, checks in, deletes, and resets', async t
   assert.equal(run.documents.length, 24);
   assert.ok(run.proposals.length >= 12);
   assert.equal(maxAdds, 3);
+  response = await fetch(`${base}/api/session`);
+  const session = await response.json();
+  assert.equal(session.importRun.id, body.runId);
+  assert.equal(session.importRun.status, 'ready');
+  assert.equal(session.proposals.length, run.proposals.length);
+  for (const path of ['/app', '/app/overview', '/app/review', '/app/timeline', '/app/wrapped']) {
+    response = await fetch(base + path);
+    assert.equal(response.status, 200);
+    assert.match(response.headers.get('content-type'), /text\/html/);
+  }
+  response = await fetch(`${base}/api/not-a-route`);
+  assert.equal(response.status, 404);
+  assert.match(response.headers.get('content-type'), /application\/json/);
   response = await fetch(`${base}/api/proposals/${run.proposals[0].id}`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ action: 'confirm', version: run.version }) });
   const confirmed = await response.json();
   assert.equal(confirmed.proposal.status, 'confirmed');

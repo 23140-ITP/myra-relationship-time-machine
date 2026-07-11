@@ -44,6 +44,7 @@ export function createMemoryAdapter({ baseUrl = 'http://127.0.0.1:6767', apiKey 
 
 export function createApp({ memoryAdapter, statePath = join(process.cwd(), '.data', 'myra-state.json') }) {
   const app = express();
+  const publicIndex = fileURLToPath(new URL('./public/index.html', import.meta.url));
   let state = emptyState(), queue = Promise.resolve();
   const load = readFile(statePath, 'utf8').then(text => { const next = JSON.parse(text); if ((next.schemaVersion ?? 1) !== 1 || !Number.isInteger(next.version)) throw Error('Unsupported state version.'); state = next; }).catch(error => { if (error.code !== 'ENOENT') state.corrupt = true; });
   const mutate = reducer => {
@@ -97,6 +98,15 @@ export function createApp({ memoryAdapter, statePath = join(process.cwd(), '.dat
   app.use(express.static(fileURLToPath(new URL('./public', import.meta.url))));
 
   app.get('/api/health', async (_req, res) => { try { await load; res.json({ ok: await memoryAdapter.health(), ready: state.importRun?.status === 'ready' }); } catch { fail(res, 503, 'SUPERMEMORY_UNAVAILABLE', 'Supermemory Local is not reachable on port 6767.', true); } });
+  app.get('/api/session', async (_req, res) => {
+    await load;
+    const run = state.importRun;
+    res.json({
+      importRun: run ? { id: run.id, status: importTimedOut(run) ? 'timeout' : run.status, startedAt: run.startedAt, documents: run.documents } : null,
+      proposals: state.proposals,
+      version: state.version
+    });
+  });
   app.post('/api/import', async (_req, res) => {
     let moments; try { moments = parseTranscript(fixture.transcript); if (moments.length !== 24) throw Error('Expected exactly 24 moments.'); } catch (error) { return fail(res, 422, 'FIXTURE_MISMATCH', error.message); }
     if (state.importRun && ['ingesting', 'indexing', 'ready'].includes(state.importRun.status)) return res.status(202).json({ runId: state.importRun.id });
@@ -163,6 +173,7 @@ export function createApp({ memoryAdapter, statePath = join(process.cwd(), '.dat
     for (const doc of Object.values(state.registry)) { if (doc.remoteDocumentId && !doc.deletedAt) try { await memoryAdapter.delete(doc.remoteDocumentId); } catch (error) { if (error.status !== 404) return fail(res, 503, 'DELETE_FAILED', 'Could not reset Supermemory.', true); } }
     await mutate(() => emptyState()); res.json({ ok: true });
   });
+  app.get(['/app', '/app/{*splat}'], (_req, res) => res.sendFile(publicIndex));
   app.use('/api', (_req, res) => fail(res, 404, 'NOT_FOUND', 'API route not found.'));
   app.use((error, _req, res, _next) => fail(res, 503, 'UPSTREAM_FAILED', error.message === 'State file is corrupt; reset is required.' ? error.message : 'Supermemory operation failed.', true));
   return app;
