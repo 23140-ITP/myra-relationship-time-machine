@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>MYRA — Rough Wireframe</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #f4f4f1; color: #171717; font: 15px/1.45 system-ui, sans-serif; }
+    main { width: 1440px; min-height: 1080px; margin: auto; padding: 36px; }
+    header { display: flex; justify-content: space-between; align-items: end; border-bottom: 2px solid #222; padding-bottom: 18px; }
+    h1, h2, h3, p { margin: 0; }
+    h1 { font-size: 32px; letter-spacing: -1px; }
+    h2 { font-size: 19px; }
+    h3 { font-size: 14px; text-transform: uppercase; letter-spacing: .09em; }
+    .muted { color: #686868; }
+    .tag { border: 1px solid #777; border-radius: 999px; padding: 4px 10px; font-size: 12px; }
+    .screens { display: grid; grid-template-columns: 1fr 1.18fr 1fr; gap: 18px; margin-top: 24px; }
+    .screen { background: white; border: 1px solid #777; min-height: 890px; padding: 20px; position: relative; box-shadow: 4px 4px 0 #d5d5cf; }
+    .step { display: flex; justify-content: space-between; padding-bottom: 16px; border-bottom: 1px dashed #aaa; }
+    .box { border: 1px solid #aaa; padding: 14px; margin-top: 14px; }
+    .drop { border: 2px dashed #999; padding: 30px 18px; text-align: center; margin-top: 18px; }
+    button { border: 1px solid #222; background: #222; color: white; padding: 10px 16px; font: inherit; }
+    .secondary { background: white; color: #222; }
+    .progress { height: 7px; background: #ddd; margin-top: 12px; }
+    .progress span { display: block; width: 82%; height: 100%; background: #222; }
+    .stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 12px; }
+    .stat { border: 1px solid #bbb; padding: 12px; }
+    .stat strong { display: block; font-size: 22px; }
+    .timeline { margin: 22px 4px 8px; position: relative; height: 84px; }
+    .line { position: absolute; left: 4px; right: 4px; top: 27px; border-top: 2px solid #222; }
+    .point { position: absolute; top: 19px; width: 18px; height: 18px; border: 2px solid #222; background: white; border-radius: 50%; }
+    .point.active { background: #222; }
+    .point label { position: absolute; top: 24px; left: -26px; width: 74px; text-align: center; font-size: 11px; }
+    .p1 { left: 1%; } .p2 { left: 28%; } .p3 { left: 58%; } .p4 { left: 92%; }
+    .asof { border-left: 4px solid #222; padding-left: 14px; margin: 10px 0 18px; }
+    .promise { display: grid; grid-template-columns: 34px 1fr auto; gap: 10px; align-items: start; border-top: 1px solid #ccc; padding: 13px 0; }
+    .promise:first-child { border-top: 0; }
+    .thread { width: 28px; height: 28px; border: 1px solid #333; border-radius: 50%; display: grid; place-items: center; font-size: 12px; }
+    .evidence { font-size: 12px; text-decoration: underline; }
+    .chat { background: #f3f3f0; border: 1px solid #aaa; padding: 14px; margin-top: 14px; }
+    .bubble { max-width: 84%; border: 1px solid #999; padding: 9px 11px; margin: 8px 0; background: white; }
+    .bubble.me { margin-left: auto; background: #222; color: white; }
+    .wrapped { background: #171717; color: white; padding: 18px; margin-top: 18px; min-height: 505px; }
+    .wrapped .tag { border-color: #aaa; }
+    .wrapped-card { border: 1px solid #777; padding: 18px; margin-top: 14px; min-height: 114px; }
+    .wrapped-card strong { display: block; font-size: 27px; line-height: 1.1; margin-top: 8px; }
+    .sources { margin-top: 12px; font-size: 12px; color: #c7c7c7; text-decoration: underline; }
+    .controls { display: flex; gap: 8px; margin-top: 16px; }
+    footer { margin-top: 18px; display: flex; justify-content: space-between; font-size: 12px; color: #666; }
+  </style>
+</head>
+<body>
+<main>
+  <!-- Three screens make one demo arc: bootstrap, evolving memory, emotional payoff. -->
+  <header>
+    <div><span class="tag">ROUGH WIREFRAME</span><h1>MYRA <span class="muted" style="font-size:18px">Relationship Time Machine</span></h1></div>
+    <p class="muted">Maya + Ari · one relationship · evidence stays local</p>
+  </header>
+
+  <section class="screens">
+    <article class="screen">
+      <div class="step"><h2>01 — Reconstruct the journey</h2><span class="muted">Import</span></div>
+      <div class="drop">
+        <h3>Drop a conversation export</h3>
+        <p class="muted" style="margin:10px 0 18px">WhatsApp .txt or pasted messages</p>
+        <button>Choose conversation</button>
+        <p class="muted" style="margin-top:12px;font-size:12px">Processed by Supermemory Local</p>
+      </div>
+      <div class="box">
+        <h3>Building relationship history…</h3>
+        <div class="progress"><span></span></div>
+        <p class="muted" style="margin-top:8px">Linking the same promises across different wording</p>
+      </div>
+      <div class="stats">
+        <div class="stat"><strong>14,218</strong><span class="muted">messages understood</span></div>
+        <div class="stat"><strong>1,284</strong><span class="muted">days reconstructed</span></div>
+        <div class="stat"><strong>4</strong><span class="muted">phases proposed</span></div>
+        <div class="stat"><strong>3</strong><span class="muted">promise threads found</span></div>
+      </div>
+      <div class="box">
+        <h3>Confirm what the AI noticed</h3>
+        <p style="margin-top:10px"><strong>Talking → Dating</strong><br><span class="muted">Suggested from messages around May 14, 2024</span></p>
+        <div class="controls"><button>Confirm</button><button class="secondary">Edit</button></div>
+      </div>
+      <div class="box">
+        <h3>First promise thread</h3>
+        <p style="margin-top:8px">“I’ll take you to Kyoto when this internship is over.”</p>
+        <p class="evidence" style="margin-top:8px">View 3 supporting messages →</p>
+      </div>
+    </article>
+
+    <article class="screen">
+      <div class="step"><h2>02 — Travel through what you knew</h2><span class="muted">Time Machine</span></div>
+      <div class="timeline">
+        <div class="line"></div>
+        <span class="point p1"><label>Talking</label></span>
+        <span class="point p2"><label>Dating</label></span>
+        <span class="point active p3"><label>Long distance</label></span>
+        <span class="point p4"><label>Living together</label></span>
+      </div>
+      <div class="asof">
+        <h3>Assistant as of October 18, 2025</h3>
+        <p class="muted">Only memories available by this date are included.</p>
+      </div>
+      <div class="box">
+        <h3>Promises at this moment</h3>
+        <div class="promise">
+          <span class="thread">1</span>
+          <div><strong>Visit Kyoto together</strong><p class="muted">Made → deferred during long distance</p></div>
+          <span class="tag">Open</span>
+        </div>
+        <div class="promise">
+          <span class="thread">2</span>
+          <div><strong>Never cancel without calling</strong><p class="muted">Broken once → repaired</p></div>
+          <span class="tag">Repairing</span>
+        </div>
+        <div class="promise">
+          <span class="thread">3</span>
+          <div><strong>Watch Attack on Titan</strong><p class="muted">Kept across six Sunday calls</p></div>
+          <span class="tag">Kept</span>
+        </div>
+      </div>
+      <div class="chat">
+        <h3>Continue the relationship log</h3>
+        <div class="bubble me">We argued because Ari cancelled our call again.</div>
+        <div class="bubble">This may update promise #2. Last time, you repaired this by rescheduling before bed. Did that happen again?</div>
+        <div class="controls"><button>Yes — save the repair</button><button class="secondary">Not this time</button></div>
+      </div>
+      <div class="box">
+        <h3>State change suggested</h3>
+        <p style="margin-top:8px">“We signed a lease” may mean <strong>Long distance → Living together</strong>.</p>
+        <p class="muted" style="margin-top:6px">The assistant changes only after confirmation.</p>
+      </div>
+    </article>
+
+    <article class="screen">
+      <div class="step"><h2>03 — Replay what changed</h2><span class="muted">Wrapped</span></div>
+      <div class="wrapped">
+        <span class="tag">MAYA + ARI · 2024–2027</span>
+        <div class="wrapped-card">
+          <span class="muted">Your relationship crossed</span>
+          <strong>4 chapters,<br>not one straight line.</strong>
+          <p class="sources">See confirmed chapter changes →</p>
+        </div>
+        <div class="wrapped-card">
+          <span class="muted">The promise that followed you</span>
+          <strong>“Kyoto, when the distance ends.”</strong>
+          <p class="sources">Made May 2024 · deferred twice · kept March 2027 →</p>
+        </div>
+        <div class="wrapped-card">
+          <span class="muted">What defined the hard months</span>
+          <strong>You chose repair 7 times.</strong>
+          <p class="sources">View the check-ins behind this reflection →</p>
+        </div>
+        <div class="wrapped-card">
+          <span class="muted">What changed most</span>
+          <strong>“Call me when you land” became “I’m home.”</strong>
+          <p class="sources">Replay this promise through time →</p>
+        </div>
+      </div>
+      <div class="controls"><button>Replay from the beginning</button><button class="secondary">Edit a memory</button></div>
+      <p class="muted" style="margin-top:14px">No compatibility score. No verdict. Only the history you confirmed.</p>
+    </article>
+  </section>
+  <footer><span>Design question: does one scrubber visibly connect state, promises, and Wrapped?</span><span>Evidence-linked · editable · local-first</span></footer>
+</main>
+</body>
+</html>

@@ -1,0 +1,15 @@
+{
+  "name": "myra-relationship-time-machine",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "start": "node --env-file=.env server.mjs",
+    "test": "node --test",
+    "coverage": "node --experimental-test-coverage --test"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "supermemory": "4.24.12"
+  }
+}
