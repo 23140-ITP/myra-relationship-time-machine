@@ -4,3 +4,4 @@ node_modules/
 .supermemory/
 coverage/
 *.log
+.gstack/
