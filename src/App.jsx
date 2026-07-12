@@ -39,95 +39,81 @@ function Brand() {
   );
 }
 
-function MarketingPage() {
-  const features = [
-    [
-      "Reconstruct",
-      "Turn scattered dated moments into one dependable relationship history.",
-    ],
-    [
-      "Review",
-      "Approve what Supermemory discovers before it becomes part of the story.",
-    ],
-    [
-      "Travel",
-      "Move through turning points and see only what was known at that time.",
-    ],
-    [
-      "Understand",
-      "See promises, repair patterns, milestones, and what deserves attention next.",
-    ],
-  ];
+const demoChapters = [
+  { date: "May 20, 2024", chapter: "Talking", promise: "Made", evidence: "Ari promises Maya Kyoto when the internship ends." },
+  { date: "October 18, 2025", chapter: "Long Distance", promise: "Deferred", evidence: "They agree Kyoto can wait until distance feels lighter." },
+  { date: "March 12, 2027", chapter: "Living Together", promise: "Fulfilled", evidence: "Maya meets Ari beneath the clock at Kyoto Station." },
+];
+
+function MarketingDemo() {
+  const [selected, setSelected] = useState(0);
+  const chapter = demoChapters[selected];
   return (
-    <div className="marketing">
+    <div className="product-demo" aria-label="Interactive fictional MYRA timeline">
+      <div className="demo-chrome"><span><i />Fictional demo</span><span>Private to this device</span></div>
+      <div className="demo-body">
+        <div className="demo-sidebar"><Brand /><span>Overview</span><b>Time Machine</b><span>Review</span><span>Wrapped</span></div>
+        <div className="demo-stage" aria-live="polite">
+          <div className="demo-heading"><span>Relationship timeline</span><strong>{chapter.date}</strong></div>
+          <div className="demo-dates" role="group" aria-label="Choose a turning point">
+            {demoChapters.map((item, index) => <button key={item.date} className={selected === index ? "active" : ""} aria-pressed={selected === index} onClick={() => setSelected(index)}><span>{String(index + 1).padStart(2, "0")}</span>{item.date}</button>)}
+          </div>
+          <div className="demo-result" key={chapter.date}>
+            <div><small>Current chapter</small><h3>{chapter.chapter}</h3><p>The past only shows what Maya and Ari knew at this point.</p></div>
+            <div className="demo-evidence"><small>Kyoto promise · {chapter.promise}</small><p>{chapter.evidence}</p><span>Evidence attached ↗</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function MarketingNav() {
+  const links = [["#product", "Product"], ["#how-it-works", "How it works"], ["#privacy", "Privacy"], ["#faq", "FAQ"]];
+  return <header className="site-header shell"><a href="#top" className="brand-link" aria-label="MYRA home"><Brand /></a><nav className="marketing-nav" aria-label="Main navigation">{links.map(([href, label]) => <a href={href} key={href}>{label}</a>)}<Link className="button-link" to="/app/overview">Open App</Link></nav><Dialog.Root><Dialog.Trigger asChild><button className="marketing-menu icon-button" aria-label="Open navigation"><HamburgerMenuIcon /></button></Dialog.Trigger><Dialog.Portal><Dialog.Overlay className="dialog-overlay" /><Dialog.Content className="mobile-drawer marketing-drawer"><div className="drawer-head"><Dialog.Title>Explore MYRA</Dialog.Title><Dialog.Close asChild><button className="icon-button" aria-label="Close navigation"><Cross2Icon /></button></Dialog.Close></div><nav aria-label="Mobile navigation">{links.map(([href, label]) => <Dialog.Close asChild key={href}><a href={href}>{label}</a></Dialog.Close>)}</nav><Dialog.Close asChild><Link className="button-link" to="/app/overview">Open App <ArrowRightIcon /></Link></Dialog.Close></Dialog.Content></Dialog.Portal></Dialog.Root></header>;
+}
+
+function MarketingPage() {
+  return (
+    <div className="marketing" id="top">
       <a className="skip-link" href="#main">
         Skip to content
       </a>
-      <header className="site-header shell">
-        <Brand />
-        <nav className="marketing-nav" aria-label="Main navigation">
-          <a href="#features">Features</a>
-          <a href="#privacy">Privacy</a>
-          <Link className="button-link" to="/app/overview">
-            Open App
-          </Link>
-        </nav>
-      </header>
-      <main id="main" className="shell">
-        <section className="hero">
-          <div>
-            <h1>
-              Remember what changed. <em>See what stayed.</em>
-            </h1>
-          </div>
-          <div className="hero-copy">
-            <p className="lede">
-              MYRA turns scattered moments into a relationship you can travel
-              through, without sending the story beyond your machine.
-            </p>
-            <Link className="button-link" to="/app/overview">
-              Open App <ArrowRightIcon />
-            </Link>
-          </div>
+      <MarketingNav />
+      <main id="main">
+        <section className="saas-hero shell">
+          <div className="hero-title"><span className="hero-kicker">Private relationship intelligence</span><h1>Your relationship has a memory. <em>Keep it yours.</em></h1></div>
+          <div className="hero-pitch"><p>MYRA reconstructs the moments that shaped your relationship, lets you review every conclusion, and keeps the entire process on your machine.</p><div className="hero-actions"><Link className="button-link" to="/app/overview">Open App <ArrowRightIcon /></Link><a className="text-link" href="#product">See how it works ↓</a></div><span className="trust-line"><LockClosedIcon />Supermemory + Ollama. No relationship data sent to the cloud.</span></div>
         </section>
-        <section id="features" className="marketing-section">
-          <div className="marketing-heading">
-            <h2>One story. Four ways to understand it.</h2>
-            <p>
-              MYRA keeps the emotional work focused, inspectable, and grounded
-              in evidence.
-            </p>
-          </div>
-          <div className="feature-list">
-            {features.map(([title, copy], index) => (
-              <article className="feature-row" key={title}>
-                <span>0{index + 1}</span>
-                <h3>{title}</h3>
-                <p>{copy}</p>
-              </article>
-            ))}
-          </div>
+
+        <section id="product" className="product-proof shell"><div className="section-intro"><span>See the product</span><h2>A relationship you can move through.</h2><p>Choose a turning point. MYRA changes the chapter, promise state, and available evidence without letting the future rewrite the past.</p></div><MarketingDemo /></section>
+
+        <section className="thesis-band"><div className="shell thesis-grid"><h2>Most AI gives you a conclusion. MYRA gives you the history behind it.</h2><div className="comparison"><div><span>Ordinary AI</span><p>One flattened summary, detached from when things happened.</p></div><div><span>MYRA</span><p>Reviewed discoveries, dated evidence, and conclusions you can correct.</p></div></div></div></section>
+
+        <section id="how-it-works" className="process-section shell"><div className="section-intro"><span>How it works</span><h2>From scattered moments to a story you trust.</h2></div><ol className="process-list"><li><span>01</span><h3>Import locally</h3><p>Bring dated moments into Supermemory on your device.</p></li><li><span>02</span><h3>Review discoveries</h3><p>Confirm, edit, or reject every phase, promise, and repair.</p></li><li><span>03</span><h3>Travel the story</h3><p>Move through time and inspect the evidence behind each chapter.</p></li></ol></section>
+
+        <section className="story-sections shell" aria-label="MYRA product capabilities">
+          <article className="story-row"><div className="story-copy"><span>Review</span><h2>Nothing becomes true without you.</h2><p>MYRA proposes what changed. You decide what belongs in the relationship record.</p></div><div className="review-fragment"><span>Discovery · Promise</span><p>“Kyoto, when the internship ends.”</p><div><button>Confirm</button><button className="secondary">Edit</button><button className="secondary">Reject</button></div></div></article>
+          <article className="story-row reverse"><div className="story-copy"><span>Time Machine</span><h2>The past only knows what it knew then.</h2><p>Every chapter is rebuilt from evidence available at that date—never from what happened later.</p></div><div className="cutoff-fragment"><div><span>May 2024</span><b>Promise made</b></div><div><span>October 2025</span><b>Promise deferred</b></div><div><span>March 2027</span><b>Promise fulfilled</b></div></div></article>
+          <article className="story-row"><div className="story-copy"><span>Wrapped</span><h2>A summary that can show its work.</h2><p>Your relationship patterns stay tied to evidence. Delete the source, and dependent claims disappear too.</p></div><div className="wrapped-fragment"><small>Promise that followed you</small><strong>The Kyoto promise</strong><span>Grounded in 3 evidence sources</span><a href="#privacy">Inspect how privacy works ↗</a></div></article>
         </section>
-        <section id="privacy" className="privacy-band">
-          <div>
-            <LockClosedIcon />
-            <h2>Your relationship stays local.</h2>
-          </div>
-          <p>
-            MYRA runs against Supermemory Local. The product is designed around
-            evidence you can inspect, correct, and delete.
-          </p>
-        </section>
-        <section className="final-cta">
-          <h2>Give the past somewhere useful to go.</h2>
-          <Link className="button-link" to="/app/overview">
-            Open App <ArrowRightIcon />
-          </Link>
-        </section>
+
+        <section id="privacy" className="privacy-section"><div className="shell"><div className="privacy-lead"><LockClosedIcon /><span>Fully local by design</span><h2>Your story stays inside the room.</h2><p>Storage, search, and inference run on your device. MYRA has no cloud fallback.</p></div><div className="architecture-flow" aria-label="Local data flow"><span>Browser</span><i>→</i><span>MYRA<br /><small>localhost</small></span><i>→</i><span>Supermemory<br /><small>local</small></span><i>→</i><span>Ollama<br /><small>local model</small></span></div><div className="privacy-promises"><p><b>Local storage</b>Your relationship record remains on your machine.</p><p><b>Local inference</b>Ollama processes the story without a remote model provider.</p><p><b>Evidence control</b>Inspect, correct, and delete what supports every conclusion.</p></div></div></section>
+
+        <section className="facts-section shell"><div><strong>24</strong><span>fictional moments</span></div><div><strong>3</strong><span>turning points</span></div><div><strong>100%</strong><span>date-cutoff safe</span></div><div><strong>MIT</strong><span>open-source license</span></div><p>Verifiable product facts—not borrowed logos or invented testimonials. <a href="https://github.com/23140-ITP/myra-relationship-time-machine">View the source ↗</a></p></section>
+
+        <section id="faq" className="faq-section shell"><div className="section-intro"><span>Questions, answered</span><h2>Before you trust MYRA with a story.</h2></div><Accordion.Root type="single" collapsible className="faq-list">{[
+          ["Is MYRA therapy?", "No. MYRA is a memory and reflection tool. It does not diagnose, prescribe, or replace professional care."],
+          ["Is the demo based on real people?", "No. Maya and Ari are fictional, and the included 24 moments exist only to demonstrate the product."],
+          ["Does anything leave my device?", "No. The fully local configuration uses Supermemory Local and an Ollama model bound to your machine."],
+          ["Can I correct what MYRA concludes?", "Yes. Discoveries remain proposals until you confirm them, and you can edit or reject each one."],
+          ["What happens when I delete evidence?", "The source is removed from Supermemory and any confirmed claims that depend on it are invalidated."],
+        ].map(([question, answer]) => <Accordion.Item value={question} key={question}><Accordion.Header><Accordion.Trigger className="accordion-trigger"><span>{question}</span><span aria-hidden="true">+</span></Accordion.Trigger></Accordion.Header><Accordion.Content className="accordion-content"><p>{answer}</p></Accordion.Content></Accordion.Item>)}</Accordion.Root></section>
+
+        <section className="saas-final shell"><h2>Keep the story. <em>Keep control of it.</em></h2><Link className="button-link" to="/app/overview">Open App <ArrowRightIcon /></Link></section>
       </main>
       <footer className="shell marketing-footer">
-        <Brand />
-        <span>Relationship memory, on your device.</span>
+        <div><Brand /><span>Relationship memory, on your device.</span></div><nav aria-label="Footer navigation"><a href="https://github.com/23140-ITP/myra-relationship-time-machine">GitHub</a><a href="https://github.com/23140-ITP/myra-relationship-time-machine/blob/main/LICENSE">MIT License</a><a href="#privacy">Privacy architecture</a><a href="#top">Back to top ↑</a></nav>
       </footer>
     </div>
   );

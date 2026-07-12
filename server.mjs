@@ -23,6 +23,22 @@ export async function withRetries(operation, delays = [250, 750]) {
   }
 }
 
+export function assertLoopbackUrl(value, label) {
+  let url;
+  try { url = new URL(value); } catch { throw new Error(`${label} must be a valid URL.`); }
+  if (url.protocol !== 'http:' || !['127.0.0.1', 'localhost', '[::1]'].includes(url.hostname)) throw new Error(`${label} must use a local HTTP loopback address.`);
+  return url.toString().replace(/\/$/, '');
+}
+
+export function assertLocalInferenceMode(value) {
+  if (value !== 'ollama') throw new Error('SUPERMEMORY_MODEL_PROVIDER must be ollama; cloud fallback is disabled.');
+}
+
+export function createOllamaHealth({ baseUrl = 'http://127.0.0.1:11434' } = {}) {
+  const localUrl = assertLoopbackUrl(baseUrl, 'OLLAMA_API_URL');
+  return () => fetch(`${localUrl}/api/tags`, { signal: AbortSignal.timeout(3_000) }).then(response => response.ok).catch(() => false);
+}
+
 export function createMemoryAdapter({ baseUrl = 'http://127.0.0.1:6767', apiKey = '' } = {}) {
   const request = async (path, options = {}, timeout = 15_000) => {
     const signal = AbortSignal.timeout(timeout);
@@ -42,7 +58,7 @@ export function createMemoryAdapter({ baseUrl = 'http://127.0.0.1:6767', apiKey 
   };
 }
 
-export function createApp({ memoryAdapter, statePath = join(process.cwd(), '.data', 'myra-state.json') }) {
+export function createApp({ memoryAdapter, ollamaHealth = async () => true, statePath = join(process.cwd(), '.data', 'myra-state.json') }) {
   const app = express();
   const publicIndex = fileURLToPath(new URL('./public/index.html', import.meta.url));
   let state = emptyState(), queue = Promise.resolve();
@@ -97,7 +113,15 @@ export function createApp({ memoryAdapter, statePath = join(process.cwd(), '.dat
   app.use(express.json({ limit: '1mb' }));
   app.use(express.static(fileURLToPath(new URL('./public', import.meta.url))));
 
-  app.get('/api/health', async (_req, res) => { try { await load; res.json({ ok: await memoryAdapter.health(), ready: state.importRun?.status === 'ready' }); } catch { fail(res, 503, 'SUPERMEMORY_UNAVAILABLE', 'Supermemory Local is not reachable on port 6767.', true); } });
+  app.get('/api/health', async (_req, res) => {
+    await load;
+    const [supermemory, ollama] = await Promise.all([
+      Promise.resolve().then(() => memoryAdapter.health()).catch(() => false),
+      Promise.resolve().then(() => ollamaHealth()).catch(() => false)
+    ]);
+    const ok = Boolean(supermemory && ollama);
+    res.status(ok ? 200 : 503).json({ ok, ready: ok && state.importRun?.status === 'ready', services: { supermemory: Boolean(supermemory), ollama: Boolean(ollama) }, privacyMode: 'fully-local' });
+  });
   app.get('/api/session', async (_req, res) => {
     await load;
     const run = state.importRun;
@@ -181,6 +205,11 @@ export function createApp({ memoryAdapter, statePath = join(process.cwd(), '.dat
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   if (!process.env.SUPERMEMORY_API_KEY) throw new Error('SUPERMEMORY_API_KEY is required.');
-  const adapter = createMemoryAdapter({ apiKey: process.env.SUPERMEMORY_API_KEY, baseUrl: process.env.SUPERMEMORY_API_URL });
-  createApp({ memoryAdapter: adapter }).listen(3000, '127.0.0.1', () => console.log('MYRA: http://127.0.0.1:3000'));
+  assertLocalInferenceMode(process.env.SUPERMEMORY_MODEL_PROVIDER);
+  const supermemoryUrl = assertLoopbackUrl(process.env.SUPERMEMORY_API_URL || 'http://127.0.0.1:6767', 'SUPERMEMORY_API_URL');
+  const ollamaHealth = createOllamaHealth({ baseUrl: process.env.OLLAMA_API_URL });
+  const adapter = createMemoryAdapter({ apiKey: process.env.SUPERMEMORY_API_KEY, baseUrl: supermemoryUrl });
+  const [supermemoryReady, ollamaReady] = await Promise.all([adapter.health().catch(() => false), ollamaHealth()]);
+  if (!supermemoryReady || !ollamaReady) throw new Error(`Local services unavailable: Supermemory=${supermemoryReady}, Ollama=${ollamaReady}. Cloud fallback is disabled.`);
+  createApp({ memoryAdapter: adapter, ollamaHealth }).listen(3000, '127.0.0.1', () => console.log('MYRA: http://127.0.0.1:3000'));
 }
