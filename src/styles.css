@@ -1105,17 +1105,17 @@ a:focus-visible,
 .marketing { overflow-x: clip; }
 .brand-link { display: inline-flex; min-height: 44px; align-items: center; text-decoration: none; }
 .marketing-menu { display: none; }
-.saas-hero { display: grid; grid-template-columns: 1.15fr .65fr; gap: clamp(48px, 9vw, 130px); align-items: end; min-height: 690px; padding: 110px 0 88px; }
-.hero-title { position: relative; }
+.saas-hero { display: grid; grid-template-columns: 1fr; gap: 40px; place-items: center; min-height: 690px; padding: 110px 0 88px; text-align: center; }
+.hero-title { position: relative; display: grid; justify-items: center; }
 .hero-title:after { content: ""; position: absolute; z-index: -1; width: 480px; height: 480px; right: -120px; top: -150px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, rgba(167,229,211,.8), rgba(244,197,168,.55) 40%, rgba(200,184,224,.35) 65%, transparent 72%); filter: blur(16px); animation: drift 10s ease-in-out infinite alternate; }
 .hero-kicker, .section-intro>span, .story-copy>span, .privacy-lead>span { display: block; margin-bottom: 20px; color: var(--muted); font-size: .72rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; }
 .hero-title h1 { max-width: 850px; margin: 0; font: 300 clamp(4.4rem, 7.6vw, 7.4rem)/.94 Georgia,serif; letter-spacing: -.055em; }
 .hero-title h1 em, .saas-final h2 em { font-weight: 300; }
-.hero-pitch { max-width: 430px; padding-bottom: 8px; }
+.hero-pitch { max-width: 720px; padding-bottom: 8px; }
 .hero-pitch>p { margin: 0 0 30px; color: var(--body); font-size: 1.12rem; }
-.hero-actions { display: flex; align-items: center; gap: 24px; }
+.hero-actions { display: flex; align-items: center; justify-content: center; gap: 24px; }
 .text-link { display: inline-flex; min-height: 44px; align-items: center; font-weight: 500; text-underline-offset: 4px; }
-.trust-line { display: flex; align-items: center; gap: 9px; margin-top: 28px; color: var(--muted); font-size: .82rem; }
+.trust-line { display: flex; align-items: center; justify-content: center; gap: 9px; margin-top: 28px; color: var(--muted); font-size: .82rem; }
 .trust-line svg { flex: 0 0 auto; }
 .product-proof { padding: 70px 0 130px; }
 .section-intro { display: grid; grid-template-columns: .45fr 1fr .75fr; gap: 48px; align-items: start; margin-bottom: 48px; }
@@ -1203,7 +1203,7 @@ a:focus-visible,
 .faq-list .accordion-trigger>span:last-child { font: 300 1.6rem/1 sans-serif; transition: transform .2s; }
 .faq-list .accordion-trigger[data-state=open]>span:last-child { transform: rotate(45deg); }
 .faq-list .accordion-content p { max-width: 64ch; margin: 0; padding: 0 8px 28px; color: var(--body); }
-.saas-final { display: flex; align-items: flex-end; justify-content: space-between; gap: 50px; padding-top: 120px; padding-bottom: 120px; border-top: 1px solid var(--strong); }
+.saas-final { display: flex; align-items: center; flex-direction: column; gap: 40px; padding-top: 120px; padding-bottom: 120px; border-top: 1px solid var(--strong); text-align: center; }
 .saas-final h2 { max-width: 900px; margin: 0; font: 300 clamp(3.5rem,7vw,7rem)/.95 Georgia,serif; letter-spacing: -.05em; }
 .marketing-footer>div, .marketing-footer nav { display: flex; align-items: center; gap: 24px; }
 .marketing-footer nav { flex-wrap: wrap; justify-content: flex-end; }
@@ -1236,7 +1236,7 @@ a:focus-visible,
   .product-proof, .process-section, .faq-section { padding: 80px 0; }
   .demo-chrome>span:last-child { display: none; }
   .demo-stage { padding: 20px; }
-  .demo-heading, .saas-final { align-items: flex-start; flex-direction: column; }
+  .demo-heading { align-items: flex-start; flex-direction: column; }
   .demo-dates { grid-template-columns: 1fr; }
   .demo-dates button { min-height: 52px; }
   .demo-result { grid-template-columns: 1fr; }

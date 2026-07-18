@@ -4,7 +4,7 @@ import { mkdtemp, readFile, readdir, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { deriveConfirmedTimeline, deriveTimeline, deriveWrapped, importTimedOut, parseTranscript, PROMISE_TRANSITIONS, reduceProposal, safeResults, transitionPromise } from '../domain.mjs';
-import { assertLocalInferenceMode, assertLoopbackUrl, createApp, withRetries } from '../server.mjs';
+import { assertLoopbackUrl, createApp, withRetries } from '../server.mjs';
 
 const fixture = JSON.parse(await readFile(new URL('../fixtures/myra.json', import.meta.url), 'utf8'));
 
@@ -86,20 +86,18 @@ test('transient operations make exactly three total attempts', async () => {
   assert.equal(attempts, 1);
 });
 
-test('fully local mode rejects remote service URLs and reports both services', async t => {
+test('local-first mode rejects remote storage URLs and reports Supermemory readiness', async t => {
   assert.match(assertLoopbackUrl('http://127.0.0.1:6767', 'service'), /^http:\/\/127\.0\.0\.1/);
   assert.throws(() => assertLoopbackUrl('https://api.supermemory.ai', 'service'), /local HTTP loopback/);
-  assert.doesNotThrow(() => assertLocalInferenceMode('ollama'));
-  assert.throws(() => assertLocalInferenceMode('openrouter'), /cloud fallback is disabled/);
   const dir = await mkdtemp(join(tmpdir(), 'myra-health-'));
   t.after(() => rm(dir, { recursive: true, force: true }));
-  const server = createApp({ memoryAdapter: { health: async () => true }, ollamaHealth: async () => false, statePath: join(dir, 'state.json') }).listen(0, '127.0.0.1');
+  const server = createApp({ memoryAdapter: { health: async () => true }, statePath: join(dir, 'state.json') }).listen(0, '127.0.0.1');
   t.after(() => new Promise(resolve => server.close(resolve)));
   await new Promise(resolve => server.once('listening', resolve));
   const response = await fetch(`http://127.0.0.1:${server.address().port}/api/health`), body = await response.json();
-  assert.equal(response.status, 503);
-  assert.deepEqual(body.services, { supermemory: true, ollama: false });
-  assert.equal(body.privacyMode, 'fully-local');
+  assert.equal(response.status, 200);
+  assert.deepEqual(body.services, { supermemory: true });
+  assert.equal(body.privacyMode, 'local-first');
   assert.doesNotMatch(JSON.stringify(body), /api key|endpoint|provider/i);
 });
 
